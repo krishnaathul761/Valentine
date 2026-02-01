@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NEELI 💀 Will You Be My Valentine?</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Comic Sans MS', cursive;
+  background: linear-gradient(135deg, #ffe6f0, #fff);
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  text-align: center;
+}
+
+h1 {
+  font-size: 3em;
+  color: #ff4d88;
+  margin-bottom: 20px;
+}
+
+button {
+  padding: 14px 35px;
+  font-size: 20px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  margin: 15px;
+}
+
+#yesBtn {
+  background: #4CAF50;
+  color: white;
+}
+
+#noBtn {
+  background: #ff4d4d;
+  color: white;
+  position: absolute;
+}
+
+.rabbit {
+  width: 260px;
+  transition: 0.5s;
+}
+
+/* Bunny blush + bounce */
+.blush {
+  animation: blushBounce 1s infinite;
+  filter: drop-shadow(0 0 10px pink);
+}
+
+@keyframes blushBounce {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0); }
+}
+
+/* Celebration background */
+.celebrate {
+  animation: partyBg 3s infinite;
+}
+
+@keyframes partyBg {
+  0% { background: #ffb3d9; }
+  25% { background: #ffe680; }
+  50% { background: #b3ffcc; }
+  75% { background: #b3d9ff; }
+  100% { background: #ffb3d9; }
+}
+
+/* Firecracker particles */
+.firework {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: explode 1s ease-out forwards;
+}
+
+@keyframes explode {
+  from { transform: translate(0,0); opacity: 1; }
+  to {
+    transform: translate(var(--x), var(--y));
+    opacity: 0;
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+.kiss {
+  width: 250px;
+  margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="questionScreen">
+  <h1>NEELI 💀 Will You Be My Valentine? 💌</h1>
+  <img id="rabbit" class="rabbit"
+       src="https://i.imgur.com/Jb5QFQy.png">
+  <br>
+  <button id="yesBtn" onclick="yesClicked()">YES 💖</button>
+  <button id="noBtn" onmouseover="moveNo()">NO 🙈</button>
+</div>
+
+<div class="container hidden" id="yesScreen">
+  <h1>YAYYYYY 💘</h1>
+  <h1>She said YES 😭💖</h1>
+  <img class="kiss"
+       src="https://media.giphy.com/media/5GoVLqeAOo6PK/giphy.gif">
+</div>
+
+<script>
+function moveNo() {
+  const noBtn = document.getElementById("noBtn");
+  noBtn.style.left = Math.random() * (window.innerWidth - 150) + "px";
+  noBtn.style.top = Math.random() * (window.innerHeight - 100) + "px";
+}
+
+function yesClicked() {
+  document.body.classList.add("celebrate");
+  document.getElementById("rabbit").classList.add("blush");
+  document.getElementById("questionScreen").classList.add("hidden");
+  document.getElementById("yesScreen").classList.remove("hidden");
+
+  // Firecrackers
+  for (let i = 0; i < 15; i++) {
+    createFirework(
+      Math.random() * window.innerWidth,
+      Math.random() * window.innerHeight / 2
+    );
+  }
+}
+
+function createFirework(x, y) {
+  for (let i = 0; i < 30; i++) {
+    const spark = document.createElement("div");
+    spark.className = "firework";
+    spark.style.left = x + "px";
+    spark.style.top = y + "px";
+    spark.style.background = hsl(${Math.random()*360},100%,50%);
+    spark.style.setProperty("--x", ${Math.random()*300 - 150}px);
+    spark.style.setProperty("--y", ${Math.random()*300 - 150}px);
+    document.body.appendChild(spark);
+    setTimeout(() => spark.remove(), 1000);
+  }
+}
+</script>
+
+</body>
+</html>
