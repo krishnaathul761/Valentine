@@ -24,15 +24,20 @@ body {
 h1 {
   font-size: 3em;
   color: #ff4d88;
+  margin-bottom: 20px;
+}
+
+.buttons {
+  margin-top: 20px;
 }
 
 button {
-  padding: 14px 35px;
+  padding: 14px 40px;
   font-size: 20px;
   border-radius: 30px;
   border: none;
   cursor: pointer;
-  margin: 20px;
+  margin: 15px;
 }
 
 #yesBtn {
@@ -44,39 +49,25 @@ button {
   background: #ff4d4d;
   color: white;
   position: absolute;
-  left: 50%;
-  transform: translateX(120px);
 }
 
 .rabbit {
   width: 260px;
-  margin: 20px 0;
-  animation: idleBounce 2s infinite;
+  animation: idle 2s infinite;
 }
 
-/* Idle bunny animation */
-@keyframes idleBounce {
+/* Bunny idle bounce */
+@keyframes idle {
   0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-/* Blush animation */
-.blush {
-  animation: blushBounce 0.8s infinite;
-  filter: drop-shadow(0 0 15px pink);
-}
-
-@keyframes blushBounce {
-  0%,100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-20px) scale(1.05); }
+  50% { transform: translateY(-12px); }
 }
 
 /* Celebration background */
 .celebrate {
-  animation: partyBg 2s infinite;
+  animation: party 2s infinite;
 }
 
-@keyframes partyBg {
+@keyframes party {
   0% { background: #ffb3d9; }
   25% { background: #ffe680; }
   50% { background: #b3ffcc; }
@@ -105,7 +96,7 @@ button {
 }
 
 .kiss {
-  width: 240px;
+  width: 260px;
   margin-top: 20px;
 }
 </style>
@@ -116,10 +107,12 @@ button {
 <div class="container" id="questionScreen">
   <h1>NEELI 💀 Will You Be My Valentine? 💌</h1>
 
-  <img id="rabbit" class="rabbit"
-       src="https://i.imgur.com/Jb5QFQy.png" alt="Bunny">
+  <!-- RELIABLE BUNNY GIF -->
+  <img class="rabbit"
+       src="https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif"
+       alt="Cute Bunny">
 
-  <div>
+  <div class="buttons">
     <button id="yesBtn">YES 💖</button>
     <button id="noBtn">NO 🙈</button>
   </div>
@@ -135,32 +128,26 @@ button {
 <script>
 const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
-const rabbit = document.getElementById("rabbit");
 
-noBtn.addEventListener("mouseenter", moveNo);
-yesBtn.addEventListener("click", yesClicked);
-
-function moveNo() {
+noBtn.addEventListener("mouseenter", () => {
   const x = Math.random() * (window.innerWidth - 200);
   const y = Math.random() * (window.innerHeight - 200);
   noBtn.style.left = x + "px";
   noBtn.style.top = y + "px";
-}
+});
 
-function yesClicked() {
+yesBtn.addEventListener("click", () => {
   document.body.classList.add("celebrate");
-  rabbit.classList.add("blush");
-
   document.getElementById("questionScreen").classList.add("hidden");
   document.getElementById("yesScreen").classList.remove("hidden");
 
-  for (let i = 0; i < 12; i++) {
+  for (let i = 0; i < 15; i++) {
     firework(
       Math.random() * window.innerWidth,
       Math.random() * window.innerHeight / 2
     );
   }
-}
+});
 
 function firework(x, y) {
   for (let i = 0; i < 25; i++) {
