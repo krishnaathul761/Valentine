@@ -7,13 +7,13 @@
 <style>
 body {
   margin: 0;
-  font-family: 'Comic Sans MS', cursive;
-  background: linear-gradient(135deg, #ffe6f0, #fff);
   height: 100vh;
-  overflow: hidden;
+  font-family: "Comic Sans MS", cursive;
   display: flex;
   justify-content: center;
   align-items: center;
+  background: linear-gradient(135deg, #ffe6f0, #fff);
+  overflow: hidden;
 }
 
 .container {
@@ -24,7 +24,36 @@ body {
 h1 {
   font-size: 3em;
   color: #ff4d88;
-  margin-bottom: 20px;
+}
+
+/* Bunny (CSS only) */
+.bunny {
+  width: 120px;
+  height: 120px;
+  background: white;
+  border-radius: 50%;
+  margin: 30px auto;
+  position: relative;
+  animation: bounce 2s infinite;
+}
+
+.bunny::before,
+.bunny::after {
+  content: "";
+  width: 25px;
+  height: 50px;
+  background: white;
+  border-radius: 20px;
+  position: absolute;
+  top: -40px;
+}
+
+.bunny::before { left: 15px; }
+.bunny::after { right: 15px; }
+
+@keyframes bounce {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
 }
 
 .buttons {
@@ -37,37 +66,30 @@ button {
   border-radius: 30px;
   border: none;
   cursor: pointer;
-  margin: 15px;
+  margin: 10px;
 }
 
-#yesBtn {
+#yes {
   background: #4CAF50;
   color: white;
 }
 
-#noBtn {
+#no {
   background: #ff4d4d;
   color: white;
   position: absolute;
 }
 
-.rabbit {
-  width: 260px;
-  animation: idle 2s infinite;
+.hidden {
+  display: none;
 }
 
-/* Bunny idle bounce */
-@keyframes idle {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
-}
-
-/* Celebration background */
+/* Celebration */
 .celebrate {
-  animation: party 2s infinite;
+  animation: bg 1.5s infinite;
 }
 
-@keyframes party {
+@keyframes bg {
   0% { background: #ffb3d9; }
   25% { background: #ffe680; }
   50% { background: #b3ffcc; }
@@ -75,91 +97,68 @@ button {
   100% { background: #ffb3d9; }
 }
 
-/* Fireworks */
-.firework {
+.fire {
   position: absolute;
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  animation: explode 1s ease-out forwards;
+  animation: boom 1s forwards;
 }
 
-@keyframes explode {
+@keyframes boom {
   to {
     transform: translate(var(--x), var(--y));
     opacity: 0;
   }
-}
-
-.hidden {
-  display: none;
-}
-
-.kiss {
-  width: 260px;
-  margin-top: 20px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container" id="questionScreen">
-  <h1>NEELI 💀 Will You Be My Valentine? 💌</h1>
-
-  <!-- RELIABLE BUNNY GIF -->
-  <img class="rabbit"
-       src="https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif"
-       alt="Cute Bunny">
+<div class="container" id="ask">
+  <h1>NEELI  Will You Be My Valentine?</h1>
+  <div class="bunny"></div>
 
   <div class="buttons">
-    <button id="yesBtn">YES 💖</button>
-    <button id="noBtn">NO 🙈</button>
+    <button id="yes">YES 💖</button>
+    <button id="no">NO 🙈</button>
   </div>
 </div>
 
 <div class="container hidden" id="yesScreen">
   <h1>YAYYYYY 💘</h1>
   <h1>You said YES 🥰</h1>
-  <img class="kiss"
-       src="https://media.giphy.com/media/5GoVLqeAOo6PK/giphy.gif">
 </div>
 
 <script>
-const noBtn = document.getElementById("noBtn");
-const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("no");
+const yesBtn = document.getElementById("yes");
 
 noBtn.addEventListener("mouseenter", () => {
-  const x = Math.random() * (window.innerWidth - 200);
-  const y = Math.random() * (window.innerHeight - 200);
-  noBtn.style.left = x + "px";
-  noBtn.style.top = y + "px";
+  noBtn.style.left = Math.random() * (window.innerWidth - 150) + "px";
+  noBtn.style.top = Math.random() * (window.innerHeight - 150) + "px";
 });
 
 yesBtn.addEventListener("click", () => {
   document.body.classList.add("celebrate");
-  document.getElementById("questionScreen").classList.add("hidden");
+  document.getElementById("ask").classList.add("hidden");
   document.getElementById("yesScreen").classList.remove("hidden");
 
-  for (let i = 0; i < 15; i++) {
-    firework(
-      Math.random() * window.innerWidth,
-      Math.random() * window.innerHeight / 2
-    );
-  }
+  for (let i = 0; i < 12; i++) explode();
 });
 
-function firework(x, y) {
+function explode() {
   for (let i = 0; i < 25; i++) {
-    const spark = document.createElement("div");
-    spark.className = "firework";
-    spark.style.left = x + "px";
-    spark.style.top = y + "px";
-    spark.style.background = hsl(${Math.random()*360},100%,50%);
-    spark.style.setProperty("--x", ${Math.random()*250 - 125}px);
-    spark.style.setProperty("--y", ${Math.random()*250 - 125}px);
-    document.body.appendChild(spark);
-    setTimeout(() => spark.remove(), 1000);
+    const d = document.createElement("div");
+    d.className = "fire";
+    d.style.left = "50%";
+    d.style.top = "50%";
+    d.style.background = hsl(${Math.random()*360},100%,50%);
+    d.style.setProperty("--x", ${Math.random()*300-150}px);
+    d.style.setProperty("--y", ${Math.random()*300-150}px);
+    document.body.appendChild(d);
+    setTimeout(() => d.remove(), 1000);
   }
 }
 </script>
