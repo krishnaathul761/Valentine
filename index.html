@@ -1,167 +1,254 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>NEELI 💀 Will You Be My Valentine?</title>
+import React, { useState, useRef, useEffect } from 'react';
+import { Heart, Sparkles } from 'lucide-react';
 
-<style>
-body {
-  margin: 0;
-  height: 100vh;
-  font-family: "Comic Sans MS", cursive;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #ffe6f0, #fff);
-  overflow: hidden;
-}
+const ValentineProposal = () => {
+  const [stage, setStage] = useState('proposal'); // 'proposal' or 'celebration'
+  const [noButtonPos, setNoButtonPos] = useState({ x: 0, y: 0 });
+  const [showConfetti, setShowConfetti] = useState(false);
+  const containerRef = useRef(null);
+  
+  // Sample photo URLs - replace with your actual photos
+  const photos = [
+    'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=300&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=300&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=300&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=300&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1524601500432-1e1a4c71d692?w=300&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=300&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=300&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1495107334309-fcf20504a5ab?w=300&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1504164996022-09080787b6b3?w=300&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?w=300&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1496440737103-cd596325d314?w=300&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=300&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1475403614135-5f1aa0eb5015?w=300&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1502139214982-d0ad755818d8?w=300&h=300&fit=crop',
+  ];
 
-.container {
-  text-align: center;
-  position: relative;
-}
+  const createConfetti = () => {
+    const duration = 3000;
+    const animationEnd = Date.now() + duration;
+    const colors = ['#ff0a54', '#ff477e', '#ff7096', '#ff85a1', '#fbb1bd'];
 
-h1 {
-  font-size: 3em;
-  color: #ff4d88;
-}
+    const frame = () => {
+      const timeLeft = animationEnd - Date.now();
 
-/* Bunny (CSS only) */
-.bunny {
-  width: 120px;
-  height: 120px;
-  background: white;
-  border-radius: 50%;
-  margin: 30px auto;
-  position: relative;
-  animation: bounce 2s infinite;
-}
+      if (timeLeft <= 0) return;
 
-.bunny::before,
-.bunny::after {
-  content: "";
-  width: 25px;
-  height: 50px;
-  background: white;
-  border-radius: 20px;
-  position: absolute;
-  top: -40px;
-}
+      const particleCount = 3;
+      
+      // Create confetti from random positions
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'confetti-particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.animationDelay = Math.random() * 0.5 + 's';
+        document.body.appendChild(particle);
+        
+        setTimeout(() => particle.remove(), 2000);
+      }
 
-.bunny::before { left: 15px; }
-.bunny::after { right: 15px; }
+      requestAnimationFrame(frame);
+    };
 
-@keyframes bounce {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
-}
+    frame();
+  };
 
-.buttons {
-  margin-top: 20px;
-}
+  const moveNoButton = (e) => {
+    if (!containerRef.current) return;
+    
+    const container = containerRef.current.getBoundingClientRect();
+    const maxX = container.width - 150;
+    const maxY = container.height - 60;
+    
+    const newX = Math.random() * maxX;
+    const newY = Math.random() * maxY;
+    
+    setNoButtonPos({ x: newX, y: newY });
+  };
 
-button {
-  padding: 14px 40px;
-  font-size: 20px;
-  border-radius: 30px;
-  border: none;
-  cursor: pointer;
-  margin: 10px;
-}
+  const handleYes = () => {
+    setShowConfetti(true);
+    createConfetti();
+    
+    setTimeout(() => {
+      setStage('celebration');
+    }, 1500);
+  };
 
-#yes {
-  background: #4CAF50;
-  color: white;
-}
+  // Heart shape positioning for photos - creates an actual heart shape
+  const getHeartPosition = (index, total) => {
+    // Precise heart shape coordinates (top to bottom, left to right)
+    const positions = [
+      // Top center
+      { top: '8%', left: '50%' },
+      // Upper left lobe
+      { top: '15%', left: '30%' },
+      { top: '15%', left: '40%' },
+      // Upper right lobe  
+      { top: '15%', left: '60%' },
+      { top: '15%', left: '70%' },
+      // Middle row (widest part)
+      { top: '30%', left: '20%' },
+      { top: '30%', left: '50%' },
+      { top: '30%', left: '80%' },
+      // Lower middle
+      { top: '45%', left: '30%' },
+      { top: '45%', left: '70%' },
+      { top: '60%', left: '40%' },
+      { top: '60%', left: '60%' },
+      // Bottom point
+      { top: '75%', left: '50%' },
+      { top: '85%', left: '50%' },
+    ];
+    return positions[index] || { top: '50%', left: '50%' };
+  };
 
-#no {
-  background: #ff4d4d;
-  color: white;
-  position: absolute;
-}
+  if (stage === 'celebration') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pink-100 via-red-50 to-pink-100 flex flex-col items-center justify-center p-8 overflow-hidden">
+        <style>{`
+          @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+          }
+          @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+          }
+          .photo-float {
+            animation: float 3s ease-in-out infinite;
+          }
+        `}</style>
+        
+        <div className="text-center mb-12 animate-fade-in">
+          <h1 className="text-5xl md:text-7xl font-bold text-red-600 mb-4" style={{ fontFamily: 'Pacifico, cursive' }}>
+            I love u a lot Ammueeeee ❤️
+          </h1>
+          <div className="flex justify-center gap-2 text-4xl mb-8">
+            <Heart className="text-red-500 animate-pulse" fill="currentColor" size={40} />
+            <Sparkles className="text-pink-500" size={40} />
+            <Heart className="text-red-500 animate-pulse" fill="currentColor" size={40} />
+          </div>
+        </div>
 
-.hidden {
-  display: none;
-}
+        <div className="relative w-full max-w-4xl h-[600px]">
+          {photos.slice(0, 14).map((photo, index) => {
+            const pos = getHeartPosition(index, photos.length);
+            return (
+              <div
+                key={index}
+                className="absolute photo-float"
+                style={{
+                  top: pos.top,
+                  left: pos.left,
+                  transform: 'translate(-50%, -50%)',
+                  animationDelay: `${index * 0.1}s`,
+                  zIndex: index,
+                }}
+              >
+                <div className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-white shadow-2xl hover:scale-110 transition-transform duration-300">
+                  <img 
+                    src={photo} 
+                    alt={`Memory ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
 
-/* Celebration */
-.celebrate {
-  animation: bg 1.5s infinite;
-}
-
-@keyframes bg {
-  0% { background: #ffb3d9; }
-  25% { background: #ffe680; }
-  50% { background: #b3ffcc; }
-  75% { background: #b3d9ff; }
-  100% { background: #ffb3d9; }
-}
-
-.fire {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  animation: boom 1s forwards;
-}
-
-@keyframes boom {
-  to {
-    transform: translate(var(--x), var(--y));
-    opacity: 0;
+        <div className="mt-12">
+          <img 
+            src="https://i.pinimg.com/originals/49/11/f5/4911f5edb6953b15fd7d28944dcd774c.gif"
+            alt="Celebration"
+            className="w-64 h-64 rounded-2xl shadow-2xl object-cover"
+          />
+        </div>
+      </div>
+    );
   }
-}
-</style>
-</head>
 
-<body>
+  return (
+    <div 
+      ref={containerRef}
+      className="min-h-screen bg-gradient-to-br from-pink-200 via-red-100 to-pink-200 flex flex-col items-center justify-center p-8 relative overflow-hidden"
+    >
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600&display=swap');
+        
+        @keyframes fall {
+          to {
+            transform: translateY(100vh) rotate(360deg);
+            opacity: 0;
+          }
+        }
+        
+        .confetti-particle {
+          position: fixed;
+          width: 10px;
+          height: 10px;
+          top: -10px;
+          z-index: 9999;
+          animation: fall 2s linear forwards;
+        }
+        
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+      `}</style>
 
-<div class="container" id="ask">
-  <h1>NEELI  Will You Be My Valentine?</h1>
-  <div class="bunny"></div>
+      <div className="text-center mb-8 animate-fade-in">
+        <h2 className="text-4xl md:text-6xl font-bold text-red-600 mb-2" style={{ fontFamily: 'Pacifico, cursive' }}>
+          Neeli 😙❤️
+        </h2>
+        <h1 className="text-3xl md:text-5xl font-bold text-red-700 mt-4" style={{ fontFamily: 'Poppins, sans-serif' }}>
+          Will you be my Valentine?
+        </h1>
+      </div>
 
-  <div class="buttons">
-    <button id="yes">YES 💖</button>
-    <button id="no">NO 🙈</button>
-  </div>
-</div>
+      <div className="mb-12">
+        <img 
+          src="https://i.pinimg.com/originals/02/f4/2c/02f42c7fb9e5638109f979c601f56052.gif"
+          alt="Begging puppy"
+          className="w-64 h-64 md:w-80 md:h-80 rounded-2xl shadow-2xl object-cover"
+          style={{ animation: 'bounce 2s ease-in-out infinite' }}
+        />
+      </div>
 
-<div class="container hidden" id="yesScreen">
-  <h1>YAYYYYY 💘</h1>
-  <h1>You said YES 🥰</h1>
-</div>
+      <div className="relative w-full max-w-md h-32">
+        <button
+          onClick={handleYes}
+          className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 -ml-20 bg-red-500 hover:bg-red-600 text-white px-12 py-4 rounded-full text-2xl font-bold shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110"
+          style={{ fontFamily: 'Poppins, sans-serif' }}
+        >
+          ❤️ Yes
+        </button>
+        
+        <button
+          onMouseEnter={moveNoButton}
+          onTouchStart={moveNoButton}
+          onClick={moveNoButton}
+          className="absolute bg-gray-400 hover:bg-gray-500 text-white px-12 py-4 rounded-full text-2xl font-bold shadow-lg transition-all duration-200"
+          style={{
+            fontFamily: 'Poppins, sans-serif',
+            left: noButtonPos.x || '50%',
+            top: noButtonPos.y || '50%',
+            transform: noButtonPos.x ? 'none' : 'translate(calc(-50% + 80px), -50%)',
+          }}
+        >
+          💔 No
+        </button>
+      </div>
 
-<script>
-const noBtn = document.getElementById("no");
-const yesBtn = document.getElementById("yes");
+      <p className="mt-12 text-gray-600 text-sm italic" style={{ fontFamily: 'Poppins, sans-serif' }}>
+        (Try clicking "No" if you dare... 😏)
+      </p>
+    </div>
+  );
+};
 
-noBtn.addEventListener("mouseenter", () => {
-  noBtn.style.left = Math.random() * (window.innerWidth - 150) + "px";
-  noBtn.style.top = Math.random() * (window.innerHeight - 150) + "px";
-});
-
-yesBtn.addEventListener("click", () => {
-  document.body.classList.add("celebrate");
-  document.getElementById("ask").classList.add("hidden");
-  document.getElementById("yesScreen").classList.remove("hidden");
-
-  for (let i = 0; i < 12; i++) explode();
-});
-
-function explode() {
-  for (let i = 0; i < 25; i++) {
-    const d = document.createElement("div");
-    d.className = "fire";
-    d.style.left = "50%";
-    d.style.top = "50%";
-    d.style.background = hsl(${Math.random()*360},100%,50%);
-    d.style.setProperty("--x", ${Math.random()*300-150}px);
-    d.style.setProperty("--y", ${Math.random()*300-150}px);
-    document.body.appendChild(d);
-    setTimeout(() => d.remove(), 1000);
-  }
-}
-</script>
-
-</body>
-</html>
+export default ValentineProposal;
